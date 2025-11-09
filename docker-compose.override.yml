@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+  backend:
+    volumes:
+      - .:/app                # монтируем исходники
+      - ~/.gradle:/home/gradle/.gradle
+    command: >
+      sh -c "
+        ./gradlew bootRun
+      "
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - minio
