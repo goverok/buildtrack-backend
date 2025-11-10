@@ -1,0 +1,25 @@
+services:
+  backend:
+    container_name: buildtrack-backend-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+      - minio
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/buildtrack
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: pass
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin123
+    volumes:
+      - .:/workspace          # исходники для live reload
+      - ~/.gradle:/home/gradle/.gradle # кеш gradle
+    command: sh -c "./gradlew bootRun --no-daemon --continuous"
+    networks:
+      - buildtrack-net

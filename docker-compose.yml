@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   postgres:
     image: postgres:15
@@ -10,7 +8,7 @@ services:
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: buildtrack
     ports:
-      - "5433:5432" # наружу 5433, внутри 5432
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
@@ -19,6 +17,7 @@ services:
   minio:
     image: minio/minio
     container_name: buildtrack-minio
+    restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: minioadmin
@@ -31,35 +30,9 @@ services:
     networks:
       - buildtrack-net
 
-  backend:
-    container_name: buildtrack-backend
-    build:
-      context: .
-      dockerfile: Dockerfile
-    depends_on:
-      - postgres
-      - minio
-    ports:
-      - "8081:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/buildtrack
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: pass
-      MINIO_ENDPOINT: http://minio:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin123
-    volumes:
-      - .:/app
-      - ~/.gradle:/home/gradle/.gradle
-    command: >
-      sh -c "./gradlew bootRun"
-    networks:
-      - buildtrack-net
+networks:
+  buildtrack-net:
 
 volumes:
   pgdata:
   minio-data:
-
-networks:
-  buildtrack-net:

@@ -7,7 +7,6 @@ plugins {
 }
 
 group = "com.buildtrack.backend"
-version = "0.0.1-SNAPSHOT"
 description = "Demo project for Spring Boot"
 
 java {
@@ -26,7 +25,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
 	implementation("org.flywaydb:flyway-core")
 	implementation("org.flywaydb:flyway-database-postgresql")
